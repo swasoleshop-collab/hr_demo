@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' blob: data: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="no-referrer">
+<title>HR System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F4EF; --surface:#FFFFFF; --ink:#18211B; --muted:#5A655D; --line:#D8DED5;
+  --field:#1F4A33; --field-soft:#E4ECE5; --tuber:#B9822A; --tuber-soft:#F6EBD5;
+  --danger:#A3392B; --empty:#E3E7E0; --on-field:#FFFFFF;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111613; --surface:#19201B; --ink:#E7ECE6; --muted:#9AA59C; --line:#2B352E;
+    --field:#72B58E; --field-soft:#1F2F25; --tuber:#E2AE55; --tuber-soft:#382D1A;
+    --danger:#E07A6B; --empty:#29322C; --on-field:#0F1511;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111613; --surface:#19201B; --ink:#E7ECE6; --muted:#9AA59C; --line:#2B352E;
+  --field:#72B58E; --field-soft:#1F2F25; --tuber:#E2AE55; --tuber-soft:#382D1A;
+  --danger:#E07A6B; --empty:#29322C; --on-field:#0F1511;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{font-family:"Archivo","Arial Narrow",system-ui,sans-serif;font-stretch:85%;margin:0;line-height:1.15}
+h2{font-size:20px;font-weight:700}
+h3{font-size:16px;font-weight:700}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--tuber);outline-offset:2px}
+img{max-width:100%}
+
+.topbar{background:var(--surface);border-bottom:1px solid var(--line)}
+.topbar-in{max-width:1180px;margin:0 auto;padding:12px 16px 0;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px}
+.brand{padding-bottom:10px}
+.brand b{font-family:"Archivo",sans-serif;font-stretch:80%;font-size:19px;font-weight:800;display:block}
+.brand span{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:4px;overflow-x:auto;flex-basis:100%}
+.tab{background:none;border:none;border-bottom:3px solid transparent;padding:10px 12px;cursor:pointer;color:var(--muted);font-weight:600;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--field)}
+
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 40px}
+section[hidden]{display:none}
+
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px}
+.hero h1{font-size:15px;font-weight:600;font-stretch:100%;color:var(--muted);font-family:"Public Sans",sans-serif}
+.big{font-family:"Archivo",sans-serif;font-stretch:75%;font-weight:800;font-size:clamp(64px,11vw,120px);line-height:.9;margin:6px 0 4px;letter-spacing:-1px}
+.big small{font-size:.38em;font-weight:600;color:var(--muted);letter-spacing:0}
+.hero p{margin:10px 0 0;max-width:42ch;color:var(--muted)}
+.dots{display:grid;grid-template-columns:repeat(30,1fr);gap:3px}
+.dot{aspect-ratio:1;border-radius:50%;background:var(--empty)}
+.dot.ex{background:var(--field)}
+.dot.j{background:var(--tuber)}
+.dot.o{background:transparent;box-shadow:inset 0 0 0 2px var(--tuber)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+
+.notice{background:var(--tuber-soft);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.panel h2{margin-bottom:10px}
+.list{list-style:none;margin:0;padding:0}
+.list li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.list li:first-child{border-top:none}
+.list .sub{color:var(--muted);font-size:13px}
+.linkbtn{background:none;border:none;padding:0;cursor:pointer;text-align:left;font-weight:600;color:var(--ink)}
+.linkbtn:hover{text-decoration:underline}
+.empty{color:var(--muted);font-size:14px;padding:8px 0}
+.dept-row{padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.dept-row:first-child{border-top:none}
+.dept-row .top{display:flex;justify-content:space-between;gap:8px}
+.bar{height:8px;border-radius:4px;background:var(--empty);margin-top:6px;overflow:hidden;display:flex}
+.bar span{display:block;height:100%}
+.bar .f{background:var(--field)}
+.bar .p{background:var(--tuber)}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.toolbar input[type=search],.toolbar select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);min-width:0}
+.toolbar input[type=search]{flex:1 1 220px}
+.spacer{flex:1}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--muted)}
+.btn:disabled{opacity:.6;cursor:wait}
+.btn-primary{background:var(--field);border-color:var(--field);color:var(--on-field)}
+.btn-primary:hover{border-color:var(--field);filter:brightness(1.08)}
+.btn-danger{color:var(--danger)}
+.btn-sm{padding:4px 9px;font-size:13px}
+
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:12px;overflow-x:auto;padding-bottom:8px}
+.col{background:var(--field-soft);border-radius:10px;padding:10px;min-height:200px}
+.col.rej{background:var(--empty)}
+.col-head{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px 8px}
+.col-head h3{font-size:15px}
+.col-head span{color:var(--muted);font-size:13px;font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px;cursor:pointer}
+.card:hover{border-color:var(--muted)}
+.card-name{font-weight:700}
+.card-role{font-size:13px;color:var(--muted)}
+.card-meta{font-size:13px;margin-top:4px}
+.card-meta.soon{color:var(--tuber);font-weight:600}
+.card-move{display:flex;justify-content:space-between;margin-top:8px;gap:6px}
+.card-move button:disabled{visibility:hidden}
+
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:10px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+th.c,td.c{text-align:center}
+tr:last-child td{border-bottom:none}
+td input[type=checkbox]{width:18px;height:18px;accent-color:var(--field);cursor:pointer}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--tuber-soft);color:var(--ink)}
+.tag.ok{background:var(--field-soft)}
+.prog{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.prog .bar{width:60px;margin:0}
+
+.routes{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.route .stops{color:var(--muted);font-size:13px;margin:2px 0 10px}
+.route .cap{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.route .bar{height:10px}
+.route .bar .over{background:var(--danger)}
+.route .warn{color:var(--danger);font-size:13px;font-weight:600;margin-top:6px}
+.route ul{margin-top:8px}
+
+dialog{border:none;border-radius:14px;padding:0;width:calc(100% - 24px);max-width:580px;background:var(--surface);color:var(--ink);max-height:calc(100% - 24px)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.dlg-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dlg-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dlg-body .full{grid-column:1/-1}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600;color:var(--muted)}
+label input,label select,label textarea{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-weight:400;font-size:15px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px}
+.checks label{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-weight:400;font-size:14px}
+.checks input{width:18px;height:18px;accent-color:var(--field)}
+.dlg-foot{display:flex;gap:8px;padding:14px 18px;border-top:1px solid var(--line)}
+.err{color:var(--danger);font-size:13px;grid-column:1/-1;display:none}
+
+.docs{display:grid;gap:8px;margin:8px 0 10px}
+.doc{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:6px}
+.thumb{width:56px;height:56px;border-radius:6px;background:var(--empty);object-fit:cover;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);flex:none;cursor:pointer;border:none;padding:0;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.doc .info{flex:1;min-width:0;font-size:14px}
+.doc .info span{display:block;color:var(--muted);font-size:12px}
+.docAdd{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.docAdd select,.docAdd input{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);max-width:100%}
+.hint{color:var(--muted);font-size:12px;margin:6px 0 0}
+
+.login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.login[hidden]{display:none}
+.login{overflow:auto}
+.authbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;width:100%;max-width:380px;margin:auto}
+.authbox form{display:grid;gap:14px}
+.authbox form[hidden]{display:none}
+.authbox .brandline{font-family:"Archivo",sans-serif;font-stretch:80%;font-weight:800;font-size:15px;color:var(--muted);margin-bottom:12px}
+.login .msg{color:var(--danger);font-size:13px;min-height:1em;margin:12px 0 0}
+.userbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-bottom:8px;font-size:13px;color:var(--muted)}
+.userbar[hidden]{display:none}
+.userbar b{color:var(--ink)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--field-soft);color:var(--ink)}
+.pill.off{background:var(--empty);color:var(--muted)}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:14px;transition:.2s;pointer-events:none;z-index:30;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{max-width:1180px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.stat b{display:block;font-family:"Archivo",sans-serif;font-stretch:80%;font-size:28px;font-weight:800;line-height:1.1}
+.stat span{color:var(--muted);font-size:13px}
+.alert{border-radius:10px;padding:12px 16px;margin-bottom:14px;font-weight:600;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.alert.bad{background:var(--danger);color:#fff}
+.alert.warn{background:var(--tuber-soft);color:var(--ink)}
+.alert.good{background:var(--field-soft);color:var(--ink)}
+.paytbl input[type=text],.paytbl input[type=number],.paytbl input[type=date],.paytbl select{padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font-size:14px}
+.paytbl input[type=number]{width:100px}
+.paytbl input[type=text]{width:130px}
+.st-Sent{color:var(--field);font-weight:700}
+.st-Failed{color:var(--danger);font-weight:700}
+.st-Pending,.st-On-hold{color:var(--tuber);font-weight:700}
+.deposits{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.deposits .panel{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.deposits .panel h2,.deposits .panel .due{grid-column:1/-1;margin:0}
+.deposits .due{color:var(--muted);font-size:14px}
+.deposits .due.late{color:var(--danger);font-weight:700}
+
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .deposits{grid-template-columns:1fr}
+  .hero{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .dots{grid-template-columns:repeat(20,1fr)}
+  .dlg-body,.checks{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="login" id="auth" hidden>
+  <div class="authbox">
+    <div class="brandline" id="authBrand"></div>
+    <form id="f-login" novalidate>
+      <h2>Sign in</h2>
+      <label>Email<input type="email" id="lUser" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+      <label>Password<input type="password" id="lPass" autocomplete="current-password"></label>
+      <button class="btn btn-primary" type="submit">Sign in</button>
+    </form>
+    <form id="f-change" hidden novalidate>
+      <h2>Change password</h2>
+      <label>Current password<input type="password" id="cOld" autocomplete="current-password"></label>
+      <label>New password (at least 10 characters)<input type="password" id="cNew" autocomplete="new-password"></label>
+      <label>Confirm new password<input type="password" id="cNew2" autocomplete="new-password"></label>
+      <button class="btn btn-primary" type="submit">Save new password</button>
+      <button class="btn" type="button" data-action="cancel-change" id="cancelChange">Cancel</button>
+    </form>
+    <p class="msg" id="authMsg" role="alert"></p>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><b id="companyName"></b><span id="plantName"></span></div>
+    <div class="userbar" id="userbar" hidden>
+      <span><b id="userName"></b>, <span id="userRole"></span></span>
+      <button class="btn btn-sm" data-action="change-pass">Change password</button>
+      <button class="btn btn-sm" data-action="signout">Sign out</button>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+      <button class="tab" role="tab" data-tab="candidates" aria-selected="false">Candidates</button>
+      <button class="tab" role="tab" data-tab="onboarding" aria-selected="false">Onboarding</button>
+      <button class="tab" role="tab" data-tab="transport" aria-selected="false">Staff transport</button>
+      <button class="tab" role="tab" data-tab="payroll" aria-selected="false" hidden>Payroll</button>
+      <button class="tab" role="tab" data-tab="users" aria-selected="false" hidden>Users</button>
+      <button class="tab" role="tab" data-tab="activity" aria-selected="false" hidden>Activity log</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="tab-overview"><p class="empty">Loading…</p></section>
+
+  <section id="tab-candidates" hidden>
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Search name, role or village" aria-label="Search candidates">
+      <select id="deptFilter" aria-label="Filter by department"></select>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" data-action="add">Add candidate</button>
+    </div>
+    <div class="board" id="board"></div>
+  </section>
+
+  <section id="tab-onboarding" hidden>
+    <div class="toolbar">
+      <h2>Joining paperwork and induction</h2>
+      <span class="spacer"></span>
+      <label style="flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-weight:500">
+        <input type="checkbox" id="incompleteOnly" checked> Show only incomplete
+      </label>
+    </div>
+    <div class="tablewrap" id="onbTable"></div>
+  </section>
+
+  <section id="tab-transport" hidden>
+    <div class="toolbar"><h2>Bus routes for joined and incoming staff</h2></div>
+    <div class="routes" id="routes"></div>
+  </section>
+  <section id="tab-payroll" hidden>
+    <div class="toolbar">
+      <label style="flex-direction:row;align-items:center;gap:8px;color:var(--ink)">Salary month
+        <input type="month" id="payMonth" style="padding:6px 8px">
+      </label>
+      <select id="payFilter" aria-label="Filter by payment status">
+        <option value="">All statuses</option><option>Pending</option><option>Sent</option><option>Failed</option><option>On hold</option>
+      </select>
+      <span class="spacer"></span>
+      <span id="selCount" style="color:var(--muted);font-size:14px"></span>
+      <button class="btn" data-action="bulk-sent">Mark selected as sent</button>
+      <button class="btn" data-action="bulk-hold">Put selected on hold</button>
+    </div>
+    <div id="payBody"><p class="empty">Loading…</p></div>
+  </section>
+  <section id="tab-users" hidden>
+    <div class="toolbar"><h2>Users and access</h2></div>
+    <div class="notice" style="display:block">
+      <b>To add a person:</b> in Supabase, open Authentication, then Users, then Add user, then Create new user. Enter their email and a temporary password, and tick Auto Confirm User. They then appear in this list as Not active. Click Edit, choose their role, and tick Account active. They must change the temporary password at first sign-in.<br><br>
+      <b>If someone forgets their password:</b> delete them in Supabase (Authentication, then Users) and add them again with a new temporary password, then set their role here again.
+    </div>
+    <p class="hint" style="margin:0 0 12px">Admin can do everything. HR handles candidates, onboarding, documents and transport. Accounts handles payroll and can view candidates. Viewer can only view candidates, without documents or salaries.</p>
+    <div class="tablewrap" id="usersBody"></div>
+  </section>
+
+  <section id="tab-activity" hidden>
+    <div class="toolbar"><h2>Activity log</h2><span class="spacer"></span><button class="btn" data-action="refresh-activity">Refresh</button></div>
+    <p class="hint" style="margin:-6px 0 12px">The latest 300 sign-ins and changes. Times are shown in your device's time zone.</p>
+    <div class="tablewrap" id="activityBody"></div>
+  </section>
+</main>
+
+<footer>
+  <span>Data is saved to the company database. Sign-ins and changes are recorded in the activity log.</span>
+</footer>
+
+<dialog id="dlg">
+  <form id="form" method="dialog" novalidate>
+    <div class="dlg-head"><h2 id="dlgTitle">Candidate</h2><button type="button" class="btn btn-sm" data-action="close">Close</button></div>
+    <div class="dlg-body">
+      <label class="full">Full name<input name="name" required></label>
+      <label>Phone<input name="phone" inputmode="tel"></label>
+      <label>Village / town<select name="village"></select></label>
+      <label>Department<select name="dept"></select></label>
+      <label>Role<select name="role"></select></label>
+      <label>Shift<select name="shift"></select></label>
+      <label>Source<select name="source"></select></label>
+      <label>Stage<select name="stage"></select></label>
+      <label>Interview date<input type="date" name="interviewOn"></label>
+      <label>Joining date<input type="date" name="joinOn"></label>
+      <label>Bus route<select name="route"></select></label>
+      <label id="salaryLabel">Monthly net salary (₹)<input name="salary" inputmode="numeric" placeholder="e.g. 15000"></label>
+      <label class="full">Notes<textarea name="notes" rows="2"></textarea></label>
+      <div class="full" id="checkWrap">
+        <h3 style="margin-bottom:8px">Onboarding checklist</h3>
+        <div class="checks" id="checks"></div>
+      </div>
+      <div class="full" id="docWrap">
+        <h3>Documents</h3>
+        <div class="docs" id="docList"></div>
+        <div class="docAdd" id="docAdd">
+          <select id="docLabel" aria-label="Document type"></select>
+          <input type="file" id="docFile" accept="image/*,application/pdf" aria-label="Choose file">
+          <button type="button" class="btn btn-sm" data-action="upload" id="uploadBtn">Upload</button>
+        </div>
+        <p class="hint" id="docHint">Photos are converted to WebP before upload. PDFs are stored as they are. Max 10 MB.</p>
+      </div>
+      <p class="err" id="err">Enter the candidate's name to save.</p>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn btn-primary" data-action="save" id="saveBtn">Save candidate</button>
+      <span class="spacer"></span>
+      <button type="button" class="btn btn-danger" data-action="reject" id="rejectBtn">Reject</button>
+      <button type="button" class="btn btn-danger" data-action="delete" id="deleteBtn">Delete</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="userDlg">
+  <form id="userForm" method="dialog" novalidate>
+    <div class="dlg-head"><h2 id="userDlgTitle">User</h2><button type="button" class="btn btn-sm" data-action="close-user">Close</button></div>
+    <div class="dlg-body">
+      <p class="full" style="margin:0;color:var(--muted)">Email: <b id="uemail" style="color:var(--ink)"></b></p>
+      <label class="full">Full name<input name="uname" autocomplete="off"></label>
+      <label class="full">Role<select name="urole"></select></label>
+      <label class="full" style="flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-weight:500"><input type="checkbox" name="uactive" style="width:18px;height:18px"> Account active (can sign in and use the system)</label>
+      <p class="err" id="uerr"></p>
+    </div>
+    <div class="dlg-foot"><button type="button" class="btn btn-primary" data-action="save-user">Save</button></div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
